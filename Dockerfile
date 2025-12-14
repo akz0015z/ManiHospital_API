@@ -23,8 +23,7 @@ RUN bundle exec rake assets:precompile || true
 # Expose Render's port
 EXPOSE 3000
 
-# Start command for Render:
-# 1. Load DB schema automatically (Render free tier cannot run migrations)
-# 2. Boot Rails server on the port Render assigns
-CMD rails db:schema:load && \
-    bundle exec rails server -b 0.0.0.0 -p ${PORT:-3000}
+# Start command for Render
+# 1. Run migrations (creates schema + cache_schema)
+# 2. Start the Rails server
+CMD bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0 -p ${PORT:-3000}
