@@ -11,15 +11,20 @@ WORKDIR /app
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
-# Copy the rest of the app
+# Copy the Rails app
 COPY . .
 
-# Precompile assets (if any)
+# Set production env for Rails
 ENV RAILS_ENV=production
+
+# Precompile assets only if they exist (safe for API-only apps)
 RUN bundle exec rake assets:precompile || true
 
-# Expose port
+# Expose Render's port
 EXPOSE 3000
 
-# Start the Rails server
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+# Start command for Render:
+# 1. Load DB schema automatically (Render free tier cannot run migrations)
+# 2. Boot Rails server on the port Render assigns
+CMD rails db:schema:load && \
+    bundle exec rails server -b 0.0.0.0 -p ${PORT:-3000}
