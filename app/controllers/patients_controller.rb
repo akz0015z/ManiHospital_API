@@ -7,7 +7,7 @@ class PatientsController < ApplicationController
     render json: patients
   end
 
-  # GET /patients/:id   <-- YOU WERE MISSING THIS
+  # GET /patients/:id  
   def show
     patient = Patient.find(params[:id])
     render json: patient
